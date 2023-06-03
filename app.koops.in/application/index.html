@@ -1,0 +1,1301 @@
+<!--
+    |-----------------------------------------------
+    | index.html
+    |-----------------------------------------------
+    |
+    | All files are called from this  file
+    | Only part of this file is replaced
+    | with other file when redirecting
+    |
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>KOOPS - App</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta content="IE=9; IE=8; IE=7" http-equiv="X-UA-Compatible">
+
+    <link href="vendor/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="assets/css/themes.css" type="text/css" rel="stylesheet" />
+    <link href="vendor/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+    <link href="vendor/line-awesome/line-awesome/css/line-awesome.min.css" type="text/css" rel="stylesheet" />
+    <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic' rel='stylesheet' type='text/css' />
+    <link href="vendor/select2_old/select2.css" type="text/css" rel="stylesheet" />
+    <link href="assets/css/custom_bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="vendor/trumbowyg/dist/ui/trumbowyg.min.css" rel="stylesheet" type="text/css" />
+    <link href="vendor/trumbowyg/dist/plugins/colors/ui/trumbowyg.colors.css" rel="stylesheet" type="text/css" />
+    <link href="vendor/angular-tree/dist/angular-ui-tree.min.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="assets/images/icons/favicon.png" />
+
+    <script type="text/javascript">
+        var request_from = 'webApp';
+        var app_version = '1.4.7.61';
+
+        document.write('<link href="assets/css/style.css?apv=' + app_version + '" rel="stylesheet" type="text/css" />');
+        document.write('<link href="assets/css/template.css?apv=' + app_version + '" rel="stylesheet" type="text/css" />');
+        document.write('<link href="assets/css/style_other.css?apv=' + app_version + '" rel="stylesheet" type="text/css" />');
+        document.write('<link href="assets/css/print.css?apv=' + app_version + '" rel="stylesheet" type="text/css" media="print" />');
+
+        document.write('<script type="text/javascript" src="../define.js?apv=' + app_version + '"><\/script>');
+        document.write('<script type="text/javascript" data-main="main.js?apv=' + app_version + '" src="vendor/requirejs/require.js"><\/script>');
+    </script>
+
+
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier/1.0.3/oms.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {
+            packages: ['corechart']
+        });
+    </script>
+</head>
+
+<body>
+
+    <!-- Splash Screen loader -->
+    <div class="splash" ng-cloak="" ng-class="{'clearing':$root.clearing}">
+        <div class="splash_loader">
+            <img src="assets/images/svg-loaders/oval.svg" alt="Please Wait..." height="48" width="48" style="margin-bottom: 20px;" /><br />
+            <span class="erasing"></span> Please wait
+        </div>
+    </div>
+
+    <!-- Main Loader -->
+    <div class="spinnerDrop" id="spinner">
+        <div class="loader" ng-cloak="">
+            <i class="la la-circle-o-notch la-spin"></i>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header ng-cloak="" class="hidden-print">
+        <div class="company_name">{{$root.USERCONST._kscompanyname}}</div>
+        <div class="serchMenuHeader">
+            <a tabindex="-1" href="javascript:void(0)" class="notify_icon" search-menu>
+                    <i class="la la-search"></i>
+                    <span class="short_cut"> ALT + F</span>
+                </a>
+        </div>
+        <div class="sub_end text-danger" ng-if="$root.SUBEND">
+            Your subscription is going to expire on <u>{{$root.SUBEND}}</u>. Please contact <a tabindex="-1" href="" ng-click="$root.showContact()"><b>support</b></a>.
+        </div>
+        <div class="profile_detail">
+            <div class="notification">
+
+                <!-- All -->
+                <a tabindex="-1" href="javascript:void(0)" class="notify_icon" ng-click="showNotification('all')" ng-if="$root.checkRight(['read_order']) || $root.checkRight(['read_deal']) || $root.checkRight(['read_payment_collection']) || $root.checkRight(['read_expense'])">
+                        <i class="la la-bell"></i>
+                        <div class="badge orderColor" id="allCount" style="display: none;">0</div>
+                    </a>
+
+                <!-- Message -->
+                <a tabindex="-1" href="javascript:void(0)" class="notify_icon" ng-click="showNotification('message')" style="display:none;" ng-if="$root.checkRight(['send_message'])">
+                        <i class="la la-envelope"></i>
+                        <div class="badge messageColor" id="messageCount">0</div>
+                    </a>
+
+                <!-- Device -->
+                <a tabindex="-1" href="javascript:void(0)" class="notify_icon" ng-click="showNotification('device')" style="display:none;" ng-if="$root.checkRight(['manage_account_device', 'manage_user_device'])">
+                        <i class="la la-mobile"></i>
+                        <div class="badge deviceColor" id="deviceCount">0</div>
+                    </a>
+            </div>
+
+            <!-- Setting menu -->
+            <div class="btn-group dropdown open" dropdown="" style="margin-left: 10px; cursor: pointer; line-height: 40px;">
+                <div dropdown-toggle="">
+                    {{$root.USERCONST._ksname ? $root.USERCONST._ksname : 'Admin'}} &nbsp;
+                    <i class="la la-angle-down"></i>
+                </div>
+                <ul class="dropdown-menu ng-scope dropdown-menu-right" role="menu" aria-labelledby="button-template-url" style="margin-top: -1px;">
+                    <li role="menuitem"><a tabindex="-1" href="#/changePassword" title='Change password'>Change password</a></li>
+                    <li role="menuitem"><a tabindex="-1" href="" ng-click="$root.showShortcut()" title='Keyboard shortcuts'>Keyboard shortcuts</a></li>
+                    <li role="menuitem"><a tabindex="-1" href="" ng-click="$root.showContact()" title='Support' style="color: #2e8fda; text-decoration: underline;">Contact Support</a></li>
+                    <li role="menuitem"><a tabindex="-1" href="#/help" title='Help'>Help</a></li>
+                    <li class="divider"></li>
+                    <li role="menuitem"><a tabindex="-1" href='javascript:void(0)' title="Sign out" ng-click="logout()">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="activity_reminder" style="position: fixed; right: 0;">
+            <ul style=" list-style: none;"></ul>
+        </div>
+    </header>
+
+    <div class="slide_notification">
+
+        <!-- Order -->
+        <div class="slide_notification_icon active" id="all_notification" ng-click='showNotification("all")' ng-if="$root.checkRight(['read_order']) || $root.checkRight(['read_deal']) || $root.checkRight(['read_payment_collection']) || $root.checkRight(['read_expense'])">
+            <i class="la la-bell"></i>
+            <div class="badge orderColor" style="display: none;">0</div>
+        </div>
+
+        <!-- Message -->
+        <div class="slide_notification_icon" id="message_notification" ng-click='showNotification("message")' ng-if="$root.checkRight(['send_message'])">
+            <i class="la la-envelope"></i>
+            <div class="badge messageColor" style="display: none;">0</div>
+        </div>
+
+        <!-- Device -->
+        <div class="slide_notification_icon" id="device_notification" ng-click='showNotification("device")' ng-if="$root.checkRight(['manage_account_device', 'manage_user_device'])">
+            <i class="la la-mobile"></i>
+            <div class="badge deviceColor" style="display: none;">0</div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="slide_notification_main">
+            <ul></ul>
+        </div>
+    </div>
+    <div class="slide_notification_wrapper" ng-click='hideNotification()'></div>
+    <!-- Main Content -->
+    <div class="main" ng-cloak="">
+        <!-- Sidebar -->
+        <div class="side_bar hidden-print" scrollpane ng-init="$root.open = ''">
+            <ul class="main_menu">
+                <!-- Dashboard -->
+                <!--                    <li ng-class="{active:$root.current_state == 'dashboard'}">
+                        <a tabindex="-1" ui-sref="dashboard"><i class="la la-dashboard"></i>Dashboard</a>
+                        <div class="clearfix"></div>
+                    </li>-->
+
+                <!-- My Activity -->
+                <li ng-class="{active:$root.current_state == 'activity'}" ng-if="$root.checkRight(['manage_activity'])">
+                    <a tabindex="-1" ui-sref="activity"><i class="la la-navicon"></i>My Activity</a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- News -->
+                <li ng-class="{active:$root.current_state == 'news'}" ng-if="$root.checkRight(['manage_news'])">
+                    <a tabindex="-1" ui-sref="news" class="main_link">
+                            <i class="la la-bullhorn"></i>News
+                        </a>
+                    <a tabindex="-1" ui-sref="news/create" class="create_link"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Message -->
+                <li ng-class="{active:$root.current_state == 'message'}" ng-if="$root.checkRight(['send_message'])">
+                    <a tabindex="-1" ui-sref="message">
+                            <i class="la la-envelope"></i>Message <span id="message" style="display: none"><span id="messageCountMenu">0</span></span>
+                            <div class="badge messageColor" id="messageCountMenu" style="display: none;">0</div>
+                        </a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Catalog -->
+                <li ng-class="{open: ['productCategory', 'productUnit', 'product', 'priceGroup', 'priority'].indexOf($root.current_state) > -1 || $root.open == 'catalog'}" ng-if="$root.checkRight(['manage_product_category', 'manage_product_unit', 'read_product', 'manage_price_group', 'manage_priority'])">
+                    <a ng-click='$root.open = ($root.open != "catalog" ? "catalog" : "")'>
+                            <i class="la la-cubes"></i>Catalog
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <li ng-class="{active:$root.current_state == 'product'}" ng-if="$root.checkRight(['read_product'])">
+                            <a tabindex="-1" ui-sref="product" class="main_link">
+                                    Product
+                                </a>
+                            <a tabindex="-1" ui-sref="product/create" class="create_link" ng-if="$root.checkRight(['add_product'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'priceGroup'}" ng-if="$root.checkRight(['manage_price_group'])">
+                            <a tabindex="-1" ui-sref="priceGroup" class="main_link">
+                                    Price Group
+                                </a>
+                            <a tabindex="-1" ui-sref="priceGroup/create" class="create_link" ng-if="$root.checkRight(['manage_price_group'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'productCategory'}" ng-if="$root.checkRight(['manage_product_category'])">
+                            <a tabindex="-1" ui-sref="productCategory" class="main_link">
+                                    Category
+                                </a>
+                            <a tabindex="-1" ui-sref="productCategory/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'productUnit'}" ng-if="$root.checkRight(['manage_product_unit'])">
+                            <a tabindex="-1" ui-sref="productUnit" class="main_link">
+                                    Unit
+                                </a>
+                            <a tabindex="-1" ui-sref="productUnit/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'priority'}" ng-if="$root.checkRight(['manage_priority'])">
+                            <a tabindex="-1" ui-sref="priority">
+                                    Priority
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Account -->
+                <li ng-class="{active:$root.current_state == 'account'}" ng-if="$root.checkRight(['read_account'])">
+                    <a tabindex="-1" ui-sref="account" class="main_link">
+                            <i class="la la-users"></i>{{$root.customer_module_name}}
+                        </a>
+                    <a tabindex="-1" ui-sref="account/create" class="create_link" ng-if="$root.checkRight(['add_account'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Account Stock -->
+                <!-- Reports -->
+                <li ng-class="{open: ['accountStockAdjustment', 'accountStockReport','accountStockTransactionReport'].indexOf($root.current_state) > -1 || $root.open == 'account_stock'}" ng-if="$root.checkRight(['manage_account_stock'])">
+                    <a ng-click='$root.open = ($root.open != "account_stock" ? "account_stock" : "")'>
+                            <i class="la la-bar-chart"></i>Customer Stock
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <li ng-class="{active:$root.current_state == 'accountStockAdjustment'}">
+                            <a tabindex="-1" ui-sref="accountStockAdjustment" class="main_link">
+                                    Adjustment
+                                </a>
+                            <a tabindex="-1" ui-sref="accountStockAdjustment/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'accountStockReport'}">
+                            <a tabindex="-1" ui-sref="accountStockReport">
+                                    Stock on hand
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'accountStockTransactionReport'}">
+                            <a tabindex="-1" ui-sref="accountStockTransactionReport">
+                                    Stock Transaction
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="separator" ng-if="$root.checkRight(['read_order', 'read_payment_collection', 'read_expense', 'read_purchase_order'])"></li>
+
+                <!-- Sale Quotation -->
+                <li ng-class="{active:$root.current_state == 'quotation'}" ng-if="$root.checkRight(['read_sale_quotation'])">
+                    <a tabindex="-1" ui-sref="quotation" class="main_link">
+                            <i class="la la-check-square-o"></i>Sale Quotation
+                        </a>
+                    <a tabindex="-1" ui-sref="quotation/create" class="create_link" ng-if="$root.checkRight(['add_sale_quotation'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Estimate -->
+                <li ng-class="{active:$root.current_state == 'estimate'}" ng-if="$root.checkRight(['read_estimate'])">
+                    <a tabindex="-1" ui-sref="estimate" class="main_link">
+                            <i class="la la-calculator"></i>Estimate
+                        </a>
+                    <a tabindex="-1" ui-sref="estimate/create" class="create_link" ng-if="$root.checkRight(['add_estimate'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Order -->
+                <li ng-class="{active:$root.current_state == 'order'}" ng-if="$root.checkRight(['read_order'])">
+                    <a tabindex="-1" ui-sref="order" class="main_link">
+                            <i class="la la-shopping-cart"></i>Order <span id="orderCountMenu">0</span>
+                        </a>
+                    <a tabindex="-1" ui-sref="order/create" class="create_link" ng-if="$root.checkRight(['add_order'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!--Sales Return-->
+                <li ng-class="{active:$root.current_state == 'salesReturn'}" ng-if="$root.checkRight(['read_sales_return'])">
+                    <a tabindex="-1" ui-sref="salesReturn" class="main_link">
+                            <i class="la la-mail-reply"></i>Sales Return
+                        </a>
+                    <a tabindex="-1" ui-sref="salesReturn/create" class="create_link" ng-if="$root.checkRight(['add_sales_return'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Dispatch -->
+                <li ng-class="{active:$root.current_state == 'dispatch'}" ng-if="$root.ADVANCEFEATURE == 0 && $root.checkRight(['manage_multiorder_dispatch'])">
+                    <a tabindex="-1" ui-sref="dispatch" class="main_link">
+                            <i class="la la-truck"></i>Dispatch
+                        </a>
+                    <a tabindex="-1" ui-sref="dispatch/create" class="create_link" ng-if="$root.checkRight(['add_order_delivery'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Invoice -->
+                <li ng-class="{active:$root.current_state == 'invoice'}" ng-if="$root.checkRight(['read_invoice'])">
+                    <a tabindex="-1" ui-sref="invoice" class="main_link">
+                            <i class="la la-file-text-o"></i></i>Invoice
+                        </a>
+                    <a tabindex="-1" ui-sref="invoice/create" class="create_link" ng-if="$root.checkRight(['add_invoice'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Payment Collection -->
+                <li ng-class="{active:$root.current_state == 'paymentCollection'}" ng-if="$root.checkRight(['read_payment_collection'])">
+                    <a tabindex="-1" ui-sref="paymentCollection" class="main_link">
+                            <i class="la la-money"></i>Payment <span id="paymentCountMenu">0</span>
+                        </a>
+                    <a tabindex="-1" ui-sref="paymentCollection/create" class="create_link" ng-if="$root.checkRight(['add_payment_collection'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Expense -->
+                <li ng-class="{active:$root.current_state == 'expense'}" ng-if="$root.checkRight(['read_expense'])">
+                    <a tabindex="-1" ui-sref="expense" class="main_link">
+                            <i class="la la-beer"></i>Expense <span id="expenseCountMenu">0</span>
+                        </a>
+                    <a tabindex="-1" ui-sref="expense/create" class="create_link" ng-if="$root.checkRight(['add_expense'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Purchase Order -->
+                <li ng-class="{active:$root.current_state == 'purchaseOrder'}" ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['read_purchase_order'])">
+                    <a tabindex="-1" ui-sref="purchaseOrder" class="main_link">
+                            <i class="la la-cart-arrow-down"></i>Purchase Order
+                        </a>
+                    <a tabindex="-1" ui-sref="purchaseOrder/create" class="create_link" ng-if="$root.checkRight(['add_purchase_order'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Job -->
+                <li ng-class="{active:$root.current_state == 'job'}" ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['read_job'])">
+                    <a tabindex="-1" ui-sref="job" class="main_link">
+                            <i class="la la-flask"></i>Job
+                        </a>
+                    <a tabindex="-1" ui-sref="job/create" class="create_link" ng-if="$root.checkRight(['manage_job'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Complaint -->
+                <li ng-class="{active:$root.current_state == 'complaint'}" ng-if="$root.checkRight(['read_complaint'])">
+                    <a tabindex="-1" ui-sref="complaint" class="main_link">
+                            <i class="la la-ticket"></i>Complaint
+                        </a>
+                    <a tabindex="-1" ui-sref="complaint/create" class="create_link"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Inventory -->
+                <li ng-class="{open: ['production','grn','deliveryReceipt','goodsOut','goodsIn', 'productTransactionReport','stockOnHandReport','productionReport','warehouseStockReport','warehouseTransfer','stockAdjustment','jobConsumptionReport'].indexOf($root.current_state) > -1 || $root.open == 'ims'}"
+                    ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['manage_production','manage_grn','manage_delivery_receipt','manage_goods_out','manage_goods_in','stock_on_hand_report','product_transaction_report','warehouse_stock_report','manage_warehouse_transfer','job_consumption_report'])">
+                    <a ng-click='$root.open = ($root.open != "ims" ? "ims" : "")'>
+                            <i class="la la-industry"></i>Inventory
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <li ng-class="{active:['production'].indexOf($root.current_state) > -1}" ng-if="$root.checkRight(['manage_production'])">
+                            <a ui-sref="production" class="main_link">
+                                    Production
+                                </a>
+                            <a ui-sref="production/create" class="create_link" ng-if="$root.checkRight(['manage_production'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:['grn'].indexOf($root.current_state) > -1}" ng-if="$root.checkRight(['manage_grn'])">
+                            <a ui-sref="grn" class="main_link">
+                                    Grn
+                                </a>
+                            <a ui-sref="grn/create" class="create_link" ng-if="$root.checkRight(['manage_grn'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:['goodsIn'].indexOf($root.current_state) > -1}" ng-if="$root.checkRight(['manage_goods_in'])">
+                            <a ui-sref="goodsIn" class="main_link">
+                                    Goods In
+                                </a>
+                            <a ui-sref="goodsIn/create" class="create_link" ng-if="$root.checkRight(['manage_goods_in'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:['goodsOut'].indexOf($root.current_state) > -1}" ng-if="$root.checkRight(['manage_goods_out'])">
+                            <a ui-sref="goodsOut" class="main_link">
+                                    Goods Out
+                                </a>
+                            <a ui-sref="goodsOut/create" class="create_link" ng-if="$root.checkRight(['manage_goods_out'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:['deliveryReceipt'].indexOf($root.current_state) > -1}" ng-if="$root.checkRight(['manage_delivery_receipt'])">
+                            <a ui-sref="deliveryReceipt" class="main_link">
+                                    Delivery Receipt
+                                </a>
+                            <a ui-sref="deliveryReceipt/create" class="create_link" ng-if="$root.checkRight(['manage_delivery_receipt'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:['warehouseTransfer'].indexOf($root.current_state) > -1}" ng-if="$root.checkRight(['manage_warehouse_transfer'])">
+                            <a ui-sref="warehouseTransfer" class="main_link">
+                                    Warehouse Transfer
+                                </a>
+                            <a ui-sref="warehouseTransfer/create" class="create_link" ng-if="$root.checkRight(['manage_warehouse_transfer'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Stock on Hand Report -->
+                        <li ng-class="{active:$root.current_state == 'stockOnHandReport'}" ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['stock_on_hand_report'])">
+                            <a tabindex="-1" ui-sref="stockOnHandReport">
+                                    Stock On Hand
+                                </a>
+                        </li>
+                        <!-- Production Report -->
+                        <li ng-class="{active:$root.current_state == 'productionReport'}" ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['production_report'])">
+                            <a tabindex="-1" ui-sref="productionReport">
+                                    Production Report
+                                </a>
+                        </li>
+                        <!-- Product Transaction Report -->
+                        <li ng-class="{active:$root.current_state == 'productTransactionReport'}" ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['product_transaction_report'])">
+                            <a tabindex="-1" ui-sref="productTransactionReport">
+                                    Product Ledger
+                                </a>
+                        </li>
+                        <!-- Job Consumption Report -->
+                        <li ng-class="{active:$root.current_state == 'jobConsumptionReport'}" ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['job_consumption_report'])">
+                            <a tabindex="-1" ui-sref="jobConsumptionReport">
+                                    Job Consumption Report
+                                </a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- CRM -->
+                <li class="separator" ng-if="$root.checkRight(['read_deal', 'real_lead'])"></li>
+
+                <li ng-class="{active:$root.current_state == 'deal'}" ng-if="$root.checkRight(['read_deal'])">
+                    <a tabindex="-1" ui-sref="deal" class="main_link">
+                            <i class="la la-thumbs-up"></i>Deal <span id="dealCountMenu">0</span>
+                        </a>
+                    <a tabindex="-1" ui-sref="deal/create" class="create_link" ng-if="$root.checkRight(['add_deal'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+                <li ng-class="{active:$root.current_state == 'lead'}" ng-if="$root.checkRight(['read_lead'])">
+                    <a tabindex="-1" ui-sref="lead" class="main_link">
+                            <i class="la la-plus-square"></i>Lead 
+                        </a>
+                    <a tabindex="-1" ui-sref="lead/create" class="create_link" ng-if="$root.checkRight(['add_lead'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <li class="separator" ng-if="$root.checkRight(['manage_visit_feedback_type', 'visit_report', 'visit_locator', 'user_location', 'current_location', 'location_dashboard', 'user_performance'])"></li>
+
+                <!-- Visit -->
+                <li ng-class="{open: ['locationDashboard', 'currentLocation', 'userLocation', 'visitLocator', 'userPerformance', 'userAttendance', 'leave', 'accountVisitReport', 'leadVisitReport'].indexOf($root.current_state) > -1 || $root.open == 'location_tracking'}"
+                    ng-if="$root.checkRight(['manage_visit_feedback_type', 'visit_report', 'visit_locator', 'user_location', 'current_location', 'location_dashboard', 'user_performance', 'user_attendance', 'manage_leave'])">
+                    <a ng-click='$root.open = ($root.open != "location_tracking" ? "location_tracking" : "")'>
+                            <i class="la la-map-marker"></i>Location Tracking
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <!--Location Dashboard-->
+                        <li ng-class="{active:$root.current_state == 'locationDashboard'}">
+                            <a tabindex="-1" ui-sref="locationDashboard" ng-if="$root.checkRight(['visit_locator'])">
+                                    Dashboard
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!--Current Location-->
+                        <li ng-class="{active:$root.current_state == 'currentLocation'}">
+                            <a tabindex="-1" ui-sref="currentLocation" ng-if="$root.checkRight(['current_location'])">
+                                    Current Location
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- User Location -->
+                        <li ng-class="{active:$root.current_state == 'userLocation'}" ng-if="$root.checkRight(['user_location'])">
+                            <a tabindex="-1" ui-sref="userLocation">
+                                    All Locations
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Visit Report -->
+                        <!-- <li ng-class="{active:$root.current_state == 'visitReport'}" ng-if="$root.checkRight(['visit_report'])">
+                                <a tabindex="-1" ui-sref="visitReport">
+                                    Visits
+                                </a>
+                                <div class="clearfix"></div>
+                            </li> -->
+                        <!-- Customer Visit Report -->
+                        <li ng-class="{active:$root.current_state == 'accountVisitReport'}" ng-if="($root.checkSoftware(['klt']) && $root.ADVANCEFEATURE == 0 || root.checkSoftware(['koops']) && $root.ADVANCEFEATURE == 0)">
+                            <a tabindex="-1" ui-sref="accountVisitReport">
+                                    Customer Visits
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Lead Visit Report -->
+                        <li ng-class="{active:$root.current_state == 'leadVisitReport'}" ng-if="$root.checkSoftware(['klt']) && $root.ADVANCEFEATURE == 0">
+                            <a tabindex="-1" ui-sref="leadVisitReport">
+                                    Lead Visits
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Visit Locator -->
+                        <li ng-class="{active:$root.current_state == 'visitLocator'}" ng-if="$root.checkRight(['visit_locator'])">
+                            <a tabindex="-1" ui-sref="visitLocator">
+                                    Map Locator
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- User Performance -->
+                        <li ng-class="{active:$root.current_state == 'userPerformance'}" ng-if="$root.checkRight(['user_performance'])">
+                            <a tabindex="-1" ui-sref="userPerformance">
+                                    Track report
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- User Attendance -->
+                        <li ng-class="{active:$root.current_state == 'userAttendance'}" ng-if="$root.checkRight(['user_attendance'])">
+                            <a tabindex="-1" ui-sref="userAttendance">
+                                    User Attendance
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Leave -->
+                        <li ng-class="{active:$root.current_state == 'leave'}" ng-if="$root.checkRight(['manage_leave'])">
+                            <a tabindex="-1" ui-sref="leave" class="main_link">
+                                    Leave
+                                </a>
+                            <a tabindex="-1" ui-sref="leave/create" class="create_link" ng-if="$root.checkRight(['manage_leave'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="separator" ng-if="$root.checkRight(['orderwise_delivery_report', 'productwise_delivery_report', 'po_orderwise_delivery_report', 'po_productwise_delivery_report', 'pending_job_report', 'order_report', 'sales_report', 'device_report', 'deal_value_report', 'deal_status_report', 'lead_report', 'payment_collection_right'])"></li>
+
+                <!-- Pending Job Report -->
+                <li ng-class="{active:$root.current_state == 'pendingJobReport'}" ng-if="$root.checkRight(['pending_job_report'])">
+                    <a tabindex="-1" ui-sref="pendingJobReport" class="main_link">
+                            <i class="la la-plus-square"></i>Pending Job Report
+                        </a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Reports -->
+                <li ng-class="{open: ['orderwiseDeliveryReport', 'productwiseDeliveryReport', 'allDeliveryReport'].indexOf($root.current_state) > -1 || $root.open == 'pending_report'}" ng-if="$root.checkRight(['orderwise_delivery_report', 'productwise_delivery_report','all_delivery_report'])">
+                    <a ng-click='$root.open = ($root.open != "pending_report" ? "pending_report" : "")'>
+                            <i class="la la-bar-chart"></i>Pending Dispatch
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <li ng-class="{active:$root.current_state == 'orderwiseDeliveryReport'}" ng-if="$root.checkRight(['orderwise_delivery_report'])">
+                            <a tabindex="-1" ui-sref="orderwiseDeliveryReport">
+                                    Orderwise
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'productwiseDeliveryReport'}" ng-if="$root.checkRight(['productwise_delivery_report'])">
+                            <a tabindex="-1" ui-sref="productwiseDeliveryReport">
+                                    Productwise
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- <li ng-class="{active:$root.current_state == 'allDeliveryReport'}" ng-if="$root.checkRight(['all_delivery_report'])">
+                                <a tabindex="-1" ui-sref="allDeliveryReport">
+                                    All Dispatch
+                                </a>
+                                <div class="clearfix"></div>
+                            </li> -->
+                    </ul>
+                </li>
+
+                <!-- Pending Purchase -->
+                <li ng-class="{open: ['poOrderwiseDeliveryReport', 'poProductwiseDeliveryReport'].indexOf($root.current_state) > -1 || $root.open == 'pending_po_report'}" ng-if="$root.checkRight(['po_orderwise_delivery_report', 'po_productwise_delivery_report'])">
+                    <a ng-click='$root.open = ($root.open != "pending_po_report" ? "pending_po_report" : "")'>
+                            <i class="la la-bar-chart"></i>Pending Purchase
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <li ng-class="{active:$root.current_state == 'poOrderwiseDeliveryReport'}" ng-if="$root.checkRight(['po_orderwise_delivery_report'])">
+                            <a tabindex="-1" ui-sref="poOrderwiseDeliveryReport">
+                                    PO Orderwise
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'poProductwiseDeliveryReport'}" ng-if="$root.checkRight(['po_productwise_delivery_report'])">
+                            <a tabindex="-1" ui-sref="poProductwiseDeliveryReport">
+                                    PO Productwise
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Reports -->
+                <li ng-class="{open: ['orderReport', 'salesReport', 'dealValueReport', 'dealStatusReport', 'leadReport', 'paymentCollectionReport', 'deviceReport', 'activityReport', 'rottenReport','targetReport','expenseReport','saleQuotationReport','estimateReport','productiveVisitReport','salesReturnReport', 'outstandingReport', 'phoneCallReport'].indexOf($root.current_state) > -1 || $root.open == 'report'}"
+                    ng-if="$root.checkRight(['order_report', 'sales_report', 'device_report', 'deal_value_report', 'deal_status_report', 'lead_report', 'payment_collection_report', 'activity_report', 'rotten_report','target_report','sale_quotation_report','estimate_report','productive_visit_report','sales_return_report','expense_report', 'outstanding_report', 'phone_call_report'])">
+                    <a ng-click='$root.open = ($root.open != "report" ? "report" : "")'>
+                            <i class="la la-bar-chart"></i>Report
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <!-- Order Report -->
+                        <li ng-class="{active:$root.current_state == 'orderReport'}" ng-if="$root.checkRight(['order_report'])">
+                            <a tabindex="-1" ui-sref="orderReport">
+                                    Order
+                                </a>
+                        </li>
+
+                        <!-- Sales Report -->
+                        <li ng-class="{active:$root.current_state == 'salesReport'}" ng-if="$root.checkRight(['sales_report'])">
+                            <a tabindex="-1" ui-sref="salesReport">
+                                    Sales
+                                </a>
+                        </li>
+
+                        <!-- Lead Report -->
+                        <li ng-class="{active:$root.current_state == 'paymentCollectionReport'}" ng-if="$root.checkRight(['payment_collection_report'])">
+                            <a tabindex="-1" ui-sref="paymentCollectionReport">
+                                    Payment Collection
+                                </a>
+                        </li>
+
+                        <!-- Deal Value Report -->
+                        <li ng-class="{active:$root.current_state == 'dealValueReport'}" ng-if="$root.checkRight(['deal_value_report'])">
+                            <a tabindex="-1" ui-sref="dealValueReport">
+                                    Deal value
+                                </a>
+                        </li>
+
+                        <!-- Deal Status Report -->
+                        <li ng-class="{active:$root.current_state == 'dealStatusReport'}" ng-if="$root.checkRight(['deal_status_report'])">
+                            <a tabindex="-1" ui-sref="dealStatusReport">
+                                    Deal status
+                                </a>
+                        </li>
+
+                        <!-- Sale Quotation Report -->
+                        <li ng-class="{active:$root.current_state == 'saleQuotationReport'}" ng-if="$root.checkRight(['sale_quotation_report'])">
+                            <a tabindex="-1" ui-sref="saleQuotationReport">
+                                    Sale Quotation
+                                </a>
+                        </li>
+
+                        <!-- Estimate Report -->
+                        <li ng-class="{active:$root.current_state == 'estimateReport'}" ng-if="$root.checkRight(['estimate_report'])">
+                            <a tabindex="-1" ui-sref="estimateReport">
+                                    Estimate
+                                </a>
+                        </li>
+
+                        <!-- Sales Return Report -->
+                        <li ng-class="{active:$root.current_state == 'salesReturnReport'}" ng-if="$root.checkRight(['sales_return_report'])">
+                            <a tabindex="-1" ui-sref="salesReturnReport">
+                                    Sales Return
+                                </a>
+                        </li>
+
+                        <!-- Lead Report -->
+                        <li ng-class="{active:$root.current_state == 'leadReport'}" ng-if="$root.checkRight(['lead_report'])">
+                            <a tabindex="-1" ui-sref="leadReport">
+                                    Lead
+                                </a>
+                        </li>
+
+                        <!-- Device Report -->
+                        <li ng-class="{active:$root.current_state == 'deviceReport'}" ng-if="$root.checkRight(['device_report'])">
+                            <a tabindex="-1" ui-sref="deviceReport">
+                                    Device
+                                </a>
+                        </li>
+
+                        <!-- Activity Report -->
+                        <li ng-class="{active:$root.current_state == 'activityReport'}" ng-if="$root.checkRight(['activity_report'])">
+                            <a tabindex="-1" ui-sref="activityReport">
+                                    Daily Activity
+                                </a>
+                        </li>
+
+                        <!-- Phone Call Report -->
+                        <li ng-class="{active:$root.current_state == 'phoneCallReport'}" ng-if="$root.checkRight(['phone_call_report'])">
+                            <a tabindex="-1" ui-sref="phoneCallReport">
+                                    Phone Call
+                                </a>
+                        </li>
+
+                        <!-- Rotten Report -->
+                        <li ng-class="{active:$root.current_state == 'rottenReport'}" ng-if="$root.checkRight(['rotten_report'])">
+                            <a tabindex="-1" ui-sref="rottenReport">
+                                    Ageing
+                                </a>
+                        </li>
+
+                        <!-- Target Report -->
+                        <li ng-class="{active:$root.current_state == 'targetReport'}" ng-if="$root.checkRight(['target_report'])">
+                            <a tabindex="-1" ui-sref="targetReport">
+                                    Target
+                                </a>
+                        </li>
+
+                        <!-- Outstanding Report -->
+                        <li ng-class="{active:$root.current_state == 'outstandingReport'}" ng-if="$root.checkRight(['outstanding_report'])">
+                            <a tabindex="-1" ui-sref="outstandingReport">
+                                    Outstanding
+                                </a>
+                        </li>
+
+                        <!-- Expense Report -->
+                        <li ng-class="{active:$root.current_state == 'expenseReport'}" ng-if="$root.checkRight(['expense_report'])">
+                            <a tabindex="-1" ui-sref="expenseReport">
+                                    Expense
+                                </a>
+                        </li>
+
+                        <!-- Visit Report -->
+                        <li ng-class="{active:$root.current_state == 'productiveVisitReport'}" ng-if="$root.checkRight(['productive_visit_report'])">
+                            <a tabindex="-1" ui-sref="productiveVisitReport">
+                                   Visit
+                                </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Lead -->
+                <!-- Payment Collection -->
+                <li class="separator"></li>
+
+                <!-- User -->
+                <li ng-class="{open: ['user', 'userRole'].indexOf($root.current_state) > -1 || $root.open == 'user'}" ng-if="$root.checkRight(['read_user', 'read_user_role'])">
+                    <a ng-click='$root.open = ($root.open != "user" ? "user" : "")'>
+                            <i class="la la-user"></i>User
+                            <span class="caret pull-right"></span>
+                        </a>
+
+                    <ul class="sub_menu">
+                        <li ng-class="{active:$root.current_state == 'user'}" ng-if="$root.checkRight(['read_user'])">
+                            <a tabindex="-1" ui-sref="user" class="main_link">
+                                    User
+                                </a>
+                            <a tabindex="-1" ui-sref="user/create" class="create_link" ng-if="$root.checkRight(['modify_user'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li ng-class="{active:$root.current_state == 'userRole'}" ng-if="$root.checkRight(['read_user_role'])">
+                            <a tabindex="-1" ui-sref="userRole" class="main_link">
+                                    User Role
+                                </a>
+                            <a tabindex="-1" ui-sref="userRole/create" class="create_link" ng-if="$root.checkRight(['add_user_role'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </li>
+
+                <!-- Worker -->
+                <li ng-class="{active:$root.current_state == 'worker'}" ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['manage_worker'])">
+                    <a tabindex="-1" ui-sref="worker" class="main_link">
+                            <i class="la la-user"></i>Worker
+                        </a>
+                    <a tabindex="-1" ui-sref="worker/create" class="create_link" ng-if="$root.checkRight(['manage_worker'])"><span class="plus">+</span></a>
+                    <div class="clearfix"></div>
+                </li>
+
+                <li ng-class="{open: ['activityType', 'area', 'paymentType', 'expenseType', 'transport', 'leadStatus', 'leadSource', 'leadIndustry', 'dealPipeline', 'dealLost', 'visitFeedbackType', 'leaveType', 'holiday', 'process', 'settings', 'warehouse', 'smsTemplate', 'mailTemplate', 'whatsappTemplate','terms', 'prefix', 'workProfile','template','targetType','media','location', 'complaintType','complaintFeedbackType', 'brand', 'accountCategory', 'metaLeadCampaign', 'requestLog'].indexOf($root.current_state) > -1 || $root.open == 'setting'}"
+                    ng-if="$root.checkRight(['manage_activity_type', 'read_area', 'manage_payment_type', 'manage_expense_type', 'manage_transport', 'manage_lead_status', 'manage_lead_source', 'manage_lead_industry', 'manage_deal_pipeline', 'manage_deal_lost', 'manage_visit_feedback_type', 'manage_leave_type', 'manage_holiday', 'manage_process', 'manage_setting', 'manage_warehouse', 'manage_sms_template', 'manage_mail_template', 'manage_whatsapp_template','manage_tnc', 'manage_work_profile','manage_template','manage_target_type','manage_brand','manage_media','manage_location','manage_complaint_type','manage_complaint_feedback_type', 'manage_account_category', 'manage_meta_lead_campaign', 'manage_request_log'])">
+                    <a ng-click='$root.open = ($root.open != "setting" ? "setting" : "")'>
+                            <i class="la la-cog"></i>Settings
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <!-- Activity Type -->
+                        <li ng-class="{active:$root.current_state == 'activityType'}" ng-if="$root.checkRight(['manage_activity_type'])">
+                            <a tabindex="-1" ui-sref="activityType" class="main_link">
+                                    Activity Type
+                                </a>
+                            <a tabindex="-1" ui-sref="activityType/create" class="create_link" ng-if="$root.checkRight(['manage_activity_type'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Area -->
+                        <li ng-class="{active:$root.current_state == 'area'}" ng-if="$root.checkRight(['read_area'])">
+                            <a tabindex="-1" ui-sref="area" class="main_link">
+                                    Area
+                                </a>
+                            <a tabindex="-1" ui-sref="area/create" class="create_link" ng-if="$root.checkRight(['add_area'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Payment Type -->
+                        <li ng-class="{active:$root.current_state == 'paymentType'}" ng-if="$root.checkRight(['manage_payment_type'])">
+                            <a tabindex="-1" ui-sref="paymentType" class="main_link">
+                                    Payment Type
+                                </a>
+                            <a tabindex="-1" ui-sref="paymentType/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Expense -->
+                        <li ng-class="{active:$root.current_state == 'expenseType'}" ng-if="$root.checkRight(['manage_expense_type'])">
+                            <a tabindex="-1" ui-sref="expenseType" class="main_link">
+                                    Expense Type
+                                </a>
+                            <a tabindex="-1" ui-sref="expenseType/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Work Profile -->
+                        <li ng-class="{active:$root.current_state == 'workProfile'}" ng-if="$root.checkRight(['manage_work_profile'])">
+                            <a tabindex="-1" ui-sref="workProfile" class="main_link">
+                                    Work Profile
+                                </a>
+                            <a tabindex="-1" ui-sref="workProfile/create" class="create_link" ng-if="$root.checkRight(['manage_work_profile'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Transport -->
+                        <li ng-class="{active:$root.current_state == 'transport'}" ng-if="$root.checkRight(['manage_transport'])">
+                            <a tabindex="-1" ui-sref="transport" class="main_link">
+                                    Transport
+                                </a>
+                            <a tabindex="-1" ui-sref="transport/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Lead Status -->
+                        <li ng-class="{active:$root.current_state == 'leadStatus'}" ng-if="$root.checkRight(['manage_lead_status'])">
+                            <a tabindex="-1" ui-sref="leadStatus" class="main_link">
+                                    Lead Status
+                                </a>
+                            <a tabindex="-1" ui-sref="leadStatus/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Lead Source -->
+                        <li ng-class="{active:$root.current_state == 'leadSource'}" ng-if="$root.checkRight(['manage_lead_source'])">
+                            <a tabindex="-1" ui-sref="leadSource" class="main_link">
+                                    Lead Source
+                                </a>
+                            <a tabindex="-1" ui-sref="leadSource/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Lead Industry -->
+                        <li ng-class="{active:$root.current_state == 'leadIndustry'}" ng-if="$root.checkRight(['manage_lead_industry'])">
+                            <a tabindex="-1" ui-sref="leadIndustry" class="main_link">
+                                    Lead Industry
+                                </a>
+                            <a tabindex="-1" ui-sref="leadIndustry/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Deal Pipeline -->
+                        <li ng-class="{active:$root.current_state == 'dealPipeline'}" ng-if="$root.checkRight(['manage_deal_pipeline'])">
+                            <a tabindex="-1" ui-sref="dealPipeline" class="main_link">
+                                    Deal Pipeline
+                                </a>
+                            <a tabindex="-1" ui-sref="dealPipeline/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Deal Lost Reason -->
+                        <li ng-class="{active:$root.current_state == 'dealLost'}" ng-if="$root.checkRight(['manage_deal_lost'])">
+                            <a tabindex="-1" ui-sref="dealLost" class="main_link">
+                                    Deal Lost Reason
+                                </a>
+                            <a tabindex="-1" ui-sref="dealLost/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Visit Feedback Type -->
+                        <li ng-class="{active:$root.current_state == 'visitFeedbackType'}" ng-if="$root.checkRight(['manage_visit_feedback_type'])">
+                            <a tabindex="-1" ui-sref="visitFeedbackType" class="main_link">
+                                    Visit Feedback
+                                </a>
+                            <a tabindex="-1" ui-sref="visitFeedbackType/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Warehouse -->
+                        <li ng-class="{active:$root.current_state == 'warehouse'}" ng-if="$root.checkSoftware(['kims']) && $root.checkRight(['manage_warehouse'])">
+                            <a tabindex="-1" ui-sref="warehouse" class="main_link">
+                                    Warehouse
+                                </a>
+                            <a tabindex="-1" ui-sref="warehouse/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Leave Type -->
+                        <li ng-class="{active:$root.current_state == 'leaveType'}" ng-if="$root.checkRight(['manage_leave_type'])">
+                            <a tabindex="-1" ui-sref="leaveType" class="main_link">
+                                    Leave Type
+                                </a>
+                            <a tabindex="-1" ui-sref="leaveType/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Template -->
+                        <li ng-class="{active:$root.current_state == 'template'}" ng-if="$root.checkRight(['manage_template'])">
+                            <a tabindex="-1" ui-sref="template" class="main_link">
+                                    Template
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Prefix -->
+                        <li ng-class="{active:$root.current_state == 'prefix'}" ng-if="$root.checkRight(['manage_prefix'])">
+                            <a tabindex="-1" ui-sref="prefix" class="main_link">
+                                    Prefix
+                                </a>
+                            <!-- <a tabindex="-1" ui-sref="prefix/create" class="create_link"><span class="plus">+</span></a> -->
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Holiday -->
+                        <li ng-class="{active:$root.current_state == 'holiday'}" ng-if="$root.checkRight(['manage_holiday'])">
+                            <a tabindex="-1" ui-sref="holiday" class="main_link">
+                                    Holiday
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Process -->
+                        <li ng-class="{active:$root.current_state == 'process'}" ng-if="$root.checkRight(['manage_process'])">
+                            <a tabindex="-1" ui-sref="process" class="main_link">
+                                    Process
+                                </a>
+                            <a tabindex="-1" ui-sref="process/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Sms Template -->
+                        <li ng-class="{active:$root.current_state == 'smsTemplate'}" ng-if="$root.checkRight(['manage_sms_template'])">
+                            <a tabindex="-1" ui-sref="smsTemplate" class="main_link">
+                                    SMS Template
+                                </a>
+                            <a tabindex="-1" ui-sref="smsTemplate/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Mail Template -->
+                        <li ng-class="{active:$root.current_state == 'mailTemplate'}" ng-if="$root.checkRight(['manage_mail_template'])">
+                            <a tabindex="-1" ui-sref="mailTemplate" class="main_link">
+                                    Mail Template
+                                </a>
+                            <a tabindex="-1" ui-sref="mailTemplate/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- whatsapp Template -->
+                        <li ng-class="{active:$root.current_state == 'whatsappTemplate'}" ng-if="$root.checkRight(['manage_whatsapp_template'])">
+                            <a tabindex="-1" ui-sref="whatsappTemplate" class="main_link">
+                                    Whatsapp Template
+                                </a>
+                            <a tabindex="-1" ui-sref="whatsappTemplate/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!--Meta Ad Manager-->
+                        <li ng-class="{active:$root.current_state == 'metaLeadCampaign'}" ng-if="$root.checkRight(['manage_meta_lead_campaign'])">
+                            <a tabindex="-1" ui-sref="metaLeadCampaign" class="main_link">
+                                    Meta lead campaign 
+                                </a>
+                            <a tabindex="-1" ui-sref="metaLeadCampaign/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Terms -->
+                        <li ng-class="{active:$root.current_state == 'terms'}" ng-if="$root.checkRight(['manage_tnc'])">
+                            <a tabindex="-1" ui-sref="terms">Terms & Conditions</a>
+                        </li>
+
+                        <!-- Location -->
+                        <li ng-class="{active:$root.current_state == 'location'}" ng-if="$root.checkRight(['manage_location'])">
+                            <a tabindex="-1" ui-sref="location" class="main_link">
+                                    Location
+                                </a>
+                            <a tabindex="-1" ui-sref="location/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Target Type -->
+                        <li ng-class="{active:$root.current_state == 'targetType'}" ng-if="$root.checkRight(['manage_target_type'])">
+                            <a tabindex="-1" ui-sref="targetType" class="main_link">
+                                    Target Type
+                                </a>
+                            <a tabindex="-1" ui-sref="targetType/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Complaint Type -->
+                        <li ng-class="{active:$root.current_state == 'complaintType'}" ng-if="$root.checkRight(['manage_complaint_type'])">
+                            <a tabindex="-1" ui-sref="complaintType" class="main_link">
+                                    Complaint Type
+                                </a>
+                            <a tabindex="-1" ui-sref="complaintType/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Complaint Feedback Type -->
+                        <li ng-class="{active:$root.current_state == 'complaintFeedbackType'}" ng-if="$root.checkRight(['manage_complaint_feedback_type'])">
+                            <a tabindex="-1" ui-sref="complaintFeedbackType" class="main_link">
+                                    Complaint Feedback
+                                </a>
+                            <a tabindex="-1" ui-sref="complaintFeedbackType/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Brand -->
+                        <li ng-class="{active:$root.current_state == 'brand'}" ng-if="$root.checkRight(['manage_brand']) && $root.checkSetting('enable_multi_brand','1')">
+                            <a tabindex="-1" ui-sref="brand" class="main_link">Brand
+                                </a>
+                            <a tabindex="-1" ui-sref="brand/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Account Category -->
+                        <li ng-class="{active:$root.current_state == 'accountCategory'}" ng-if="$root.checkRight(['manage_account_category'])">
+                            <a tabindex="-1" ui-sref="accountCategory" class="main_link">Account Category</a>
+                            <a tabindex="-1" ui-sref="accountCategory/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Media -->
+                        <li ng-class="{active:$root.current_state == 'media'}" ng-if="$root.checkRight(['manage_media'])">
+                            <a tabindex="-1" ui-sref="media" class="main_link">
+                                    Media
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Request Log -->
+                        <li ng-class="{active:$root.current_state == 'requestLog'}" ng-if="$root.checkRight(['manage_request_log'])">
+                            <a tabindex="-1" ui-sref="requestLog" class="main_link">
+                                    Request Log
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <!-- Other -->
+                        <li ng-class="{active:$root.current_state == 'settings'}" ng-if="$root.checkRight(['manage_setting'])">
+                            <a tabindex="-1" ui-sref="settings">Company Settings</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Form -->
+                <li ng-class="{open: ['form'].indexOf($root.current_state) > -1 || $root.open == 'form' || $root.open == 'formData'}" ng-if="$root.checkRight(['manage_form'])">
+                    <a ng-click='$root.open = ($root.open != "form" ? "form" : "")'>
+                            <i class="la la-file"></i>Custom Forms
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <li ng-class="{active:$root.current_state == 'form'}" ng-if="$root.checkRight(['manage_form'])">
+                            <a tabindex="-1" ui-sref="form">
+                                    All Forms
+                                </a>
+                        </li>
+                        <li ng-if="$root.getFormData().length > 0" ng-repeat="fr in $root.getFormData()" ng-class="{active:$root.current_state == 'formData' && $root.param.form_code == fr.id}">
+                            <a tabindex="-1" href="#/formData/{{fr.id}}" class="main_link">{{$root.converToTitleCase(fr.id)}}</a>
+                            <a tabindex="-1" href="#/formData/{{fr.id}}/create" class="create_link" ng-if="$root.checkRight(['add_form_' + fr.id])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Task -->
+                <li ng-class="{open: ['custom_field'].indexOf($root.current_state) > -1 || $root.open == 'custom_field'}" ng-if="$root.ADVANCEFEATURE == 0 && $root.checkRight(['manage_custom_field'])">
+                    <a ng-click='$root.open = ($root.open != "custom_field" ? "custom_field" : "")'>
+                            <i class="la la-life-saver"></i>Custom fields
+                            <span class="caret pull-right"></span>
+                        </a>
+                    <ul class="sub_menu">
+                        <!-- User -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'user'}">
+                            <a tabindex="-1" href="#/custom_field/user">User</a>
+                        </li>
+                        <!-- Account -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'account'}">
+                            <a tabindex="-1" href="#/custom_field/account">Customer</a>
+                        </li>
+                        <!-- Product -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'product'}" ng-if="$root.checkSoftware(['koops', 'kcrm'])">
+                            <a tabindex="-1" href="#/custom_field/product">Product</a>
+                        </li>
+                        <!-- Order -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'order'}" ng-if="$root.checkSoftware(['koops'])">
+                            <a tabindex="-1" href="#/custom_field/order">Order</a>
+                        </li>
+                        <!-- Order Delivery -->
+                        <li ng-class="{active:$root.current_state == 'custom_field'&& $root.param.module == 'order_delivery'}" ng-if="$root.checkSoftware(['koops'])">
+                            <a tabindex="-1" href="#/custom_field/order_delivery">Order Dispatch</a>
+                        </li>
+                        <!-- Quotation -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'sale_quotation'}" ng-if="$root.checkSoftware(['koops','kcrm']) && $root.checkSetting('enable_sale_quotation','1')">
+                            <a tabindex="-1" href="#/custom_field/sale_quotation">Sale Quotation</a>
+                        </li>
+                        <!-- Estimate -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'estimate'}" ng-if="$root.checkSoftware(['koops','kcrm']) && $root.checkSetting('enable_estimate','1')">
+                            <a tabindex="-1" href="#/custom_field/estimate">Estimate</a>
+                        </li>
+                        <!-- Payment Collection -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'payment_collection'}" ng-if="$root.checkSoftware(['koops'])">
+                            <a tabindex="-1" href="#/custom_field/payment_collection">Payment</a>
+                        </li>
+                        <!--Lead-->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'lead'}" ng-if="$root.checkSoftware(['kcrm'])">
+                            <a tabindex="-1" href="#/custom_field/lead">Lead</a>
+                        </li>
+                        <!--Deal-->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'deal'}" ng-if="$root.checkSoftware(['kcrm'])">
+                            <a tabindex="-1" href="#/custom_field/deal">Deal</a>
+                        </li>
+                        <!-- Worker -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'worker'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/worker">Worker</a>
+                        </li>
+                        <!-- Purchase Order -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'ims_purchase_order'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/ims_purchase_order">Purchase Order</a>
+                        </li>
+                        <!-- Job -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'job'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/job">Job</a>
+                        </li>
+                        <!-- Production -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'production'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/production">Production</a>
+                        </li>
+                        <!-- Grn -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'grn'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/grn">Grn</a>
+                        </li>
+                        <!-- Delivery Receipt -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'delivery_receipt'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/delivery_receipt">Delivery Receipt</a>
+                        </li>
+                        <!-- Goods In -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'goods_in'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/goods_in">Goods In</a>
+                        </li>
+                        <!-- Goods Out -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'goods_out'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/goods_out">Goods Out</a>
+                        </li>
+                        <!-- Warehouse Transfer -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'warehouse_transfer'}" ng-if="$root.checkSoftware(['kims'])">
+                            <a tabindex="-1" href="#/custom_field/warehouse_transfer">Warehouse Transfer</a>
+                        </li>
+                        <!-- Visit -->
+                        <!-- <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'visit'}">
+                                <a tabindex="-1" href="#/custom_field/visit">Visit</a>
+                            </li> -->
+                        <!-- Customer visit -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'account_visit'}" ng-if="($root.checkSoftware(['klt']) && $root.ADVANCEFEATURE == 0 || root.checkSoftware(['koops']) && $root.ADVANCEFEATURE == 0)">
+                            <a tabindex="-1" href="#/custom_field/account_visit">Customer Visit</a>
+                        </li>
+                        <!-- Lead visit -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'lead_visit'}" ng-if="($root.checkSoftware(['klt']) && $root.ADVANCEFEATURE == 0)">
+                            <a tabindex="-1" href="#/custom_field/lead_visit">Lead Visit</a>
+                        </li>
+                        <!-- Invoice -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'invoice'}" ng-if="$root.checkSoftware(['koops']) && $root.checkSetting('enable_invoice','1')">
+                            <a tabindex="-1" href="#/custom_field/invoice">Invoice</a>
+                        </li>
+                        <!-- Sales Return -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'sales_return'}" ng-if="$root.checkSoftware(['koops']) && $root.checkSetting('enable_sales_return','1')">
+                            <a tabindex="-1" href="#/custom_field/sales_return">Sales Return</a>
+                        </li>
+                        <!-- Complaint -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'complaint'}" ng-if="$root.checkSoftware(['koops']) && $root.checkSetting('enable_complaint','1')">
+                            <a tabindex="-1" href="#/custom_field/complaint">Complaint</a>
+                        </li>
+                        <!-- Transport -->
+                        <li ng-class="{active:$root.current_state == 'custom_field' && $root.param.module == 'transport'}" ng-if="$root.checkSoftware(['koops'])">
+                            <a tabindex="-1" href="#/custom_field/transport">Transport</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- Task -->
+                <li ng-class="{active:$root.current_state == 'profile'}" ng-if="$root.checkRight(['manage_company_profile'])">
+                    <a tabindex="-1" ui-sref="profile">
+                            <i class="la la-user-secret"></i>Company Profile
+                        </a>
+                </li>
+                <!-- Task -->
+                <li ng-class="{active:$root.current_state == 'subscription'}" ng-if="$root.checkRight(['manage_subscription'])">
+                    <a tabindex="-1" ui-sref="subscription">
+                            <i class="la la-newspaper-o"></i>Subscription
+                        </a>
+                </li>
+                <li class="separator"></li>
+                <!-- Plugin -->
+                <li ng-class="{open: ['orderExportReport', 'plugin/151137/cronLog', 'plugin/122181/cronLog', 'cronLog', 'coupon', 'redeemCoupon', 'contactType', 'contact', 'offer', 'claimHistory', 'requestLog', 'fetchPendingSalesOrder', 'userWarehouse'].indexOf($root.current_state) > -1 || $root.open == 'plugin'}"
+                    ng-if="($root.checkRight(['enable_plugin_151137', 'enable_plugin_122181', 'enable_cron_log_998755', 'manage_contact_type_396482', 'read_contact_396482', 'read_coupon_396482', 'read_offer_396482', 'read_redeem_coupon_396482', 'read_claim_history_396482', 'request_log_840944', 'fetch_pending_sales_order_840944', 'plugin_manage_user_warehouse_684301']) || $root.USERCONST._kscustomerid == '840944')">
+                    <a ng-click='$root.open = ($root.open != "plugin" ? "plugin" : "")'>
+                            <i class="la la-wrench"></i>Plugin
+                            <span class="caret pull-right"></span>
+                        </a>
+
+                    <ul class="sub_menu">
+                        <!-- Order Export Report -->
+                        <li ng-class="{active:$root.current_state == 'orderExportReport'}" ng-if="$root.USERCONST._kscustomerid =='840944'">
+                            <a tabindex="-1" ui-sref="orderExportReport">
+                                    Order Export
+                                </a>
+                        </li>
+                        <!-- Cron Log -->
+                        <li ng-class="{active:$root.current_state == '151137/cronLog'}" ng-if="$root.checkRight(['enable_plugin_151137'])">
+                            <a tabindex="-1" ui-sref="151137/cronLog">
+                                    Cron Log
+                                </a>
+                        </li>
+                        <!-- Cron Log -->
+                        <li ng-class="{active:$root.current_state == '122181/cronLog'}" ng-if="$root.checkRight(['enable_plugin_122181'])">
+                            <a tabindex="-1" ui-sref="122181/cronLog">
+                                    Cron Log
+                                </a>
+                        </li>
+                        <!-- Cron Log -->
+                        <li ng-class="{active:$root.current_state == 'cronLog'}" ng-if="$root.checkRight(['enable_cron_log_998755'])">
+                            <a tabindex="-1" ui-sref="998755/cronLog">
+                                    Cron Log
+                                </a>
+                        </li>
+                        <!-- User Warehouse 684301 -->
+                        <li ng-class="{active:$root.current_state == '684301/userWarehouse'}" ng-if="$root.checkRight(['plugin_manage_user_warehouse_684301'])">
+                            <a tabindex="-1" ui-sref="684301/userWarehouse" class="main_link">User Warehouse</a>
+                            <a tabindex="-1" ui-sref="684301/userWarehouse/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Coupon -->
+                        <li ng-class="{active:$root.current_state == 'coupon'}" ng-if="$root.checkRight(['read_coupon_396482'])">
+                            <a tabindex="-1" ui-sref="396482/coupon" class="main_link">Coupon</a>
+                            <a tabindex="-1" ui-sref="396482/coupon/create" class="create_link" ng-if="$root.checkRight(['add_coupon_396482'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Redeem Coupon -->
+                        <li ng-class="{active:$root.current_state == 'redeemCoupon'}" ng-if="$root.checkRight(['read_redeem_coupon_396482'])">
+                            <a tabindex="-1" ui-sref="396482/redeemCoupon" class="main_link">Redeem Coupon
+                                </a>
+                            <a tabindex="-1" ui-sref="396482/redeemCoupon/create" class="create_link" ng-if="$root.checkRight(['add_redeem_coupon_396482'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Claim History -->
+                        <li ng-class="{active:$root.current_state == 'claimHistory'}" ng-if="$root.checkRight(['read_claim_history_396482'])">
+                            <a tabindex="-1" ui-sref="396482/claimHistory" class="main_link">Claim History
+                                </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Contact Type -->
+                        <li ng-class="{active:$root.current_state == 'contactType'}" ng-if="$root.checkRight(['manage_contact_type_396482'])">
+                            <a tabindex="-1" ui-sref="396482/contactType" class="main_link">Contact Type
+                                </a>
+                            <a tabindex="-1" ui-sref="396482/contactType/create" class="create_link"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Contact -->
+                        <li ng-class="{active:$root.current_state == 'contact'}" ng-if="$root.checkRight(['read_contact_396482'])">
+                            <a tabindex="-1" ui-sref="396482/contact" class="main_link">Contact
+                                </a>
+                            <a tabindex="-1" ui-sref="396482/contact/create" class="create_link" ng-if="$root.checkRight(['add_contact_396482'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Offer -->
+                        <li ng-class="{active:$root.current_state == 'offer'}" ng-if="$root.checkRight(['read_offer_396482'])">
+                            <a tabindex="-1" ui-sref="396482/offer" class="main_link">Offer
+                                </a>
+                            <a tabindex="-1" ui-sref="396482/offer/create" class="create_link" ng-if="$root.checkRight(['add_offer_396482'])"><span class="plus">+</span></a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Fetch Outstanding -->
+                        <li ng-class="{active:$root.current_state == 'requestLog'}" ng-if="$root.checkRight(['request_log_840944'])">
+                            <a tabindex="-1" ui-sref="840944/requestLog" class="main_link">Request Log</a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- Fetch Pending Sales Order -->
+                        <li ng-class="{active:$root.current_state == 'fetchPendingSalesOrder'}" ng-if="$root.checkRight(['fetch_pending_sales_order_840944'])">
+                            <a tabindex="-1" ui-sref="840944/fetchPendingSalesOrder" class="main_link">Fetch Pending SO</a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main View For load -->
+        <div ui-view></div>
+        <div class="secondary-ui-view"></div>
+    </div>
+    <input type="text" style="opacity: 0; z-index: -1" class="last_focus" />
+
+    <!-- Footer -->
+    <footer ng-cloak=""></footer>
+</body>
+
+</html>

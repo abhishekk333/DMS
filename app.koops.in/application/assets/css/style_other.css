@@ -1,0 +1,22 @@
+/* Safari only override */
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    ::i-block-chrome,
+    .message_main {
+        min-width: 876px;
+    }
+    ::i-block-chrome,
+    .message_main .message_content {
+        min-height: 440px;
+        /*height: -webkit-calc(100% - 100px);
+	    height: -moz-calc(100% - 100px);
+	    height: calc(100% - 100px);*/
+    }
+    ::i-block-chrome,
+    .content_head {
+        min-width: 1176px;
+        /*width: -webkit-calc(100% - 190px);
+	    width: -moz-calc(100% - 190px);
+	    width: calc(100% - 190px);*/
+    }
+}

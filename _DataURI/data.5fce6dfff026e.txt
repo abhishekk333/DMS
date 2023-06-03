@@ -1,0 +1,1 @@
+chrome-extension://gjnelkhbfngpoamfieddnmbcnphikiho/Extension%20Files/ext_bone/authtoken.js

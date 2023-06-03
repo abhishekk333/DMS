@@ -1,0 +1,75 @@
+<div class="content">
+    <!-- Header For Module -->
+    <div class="content_head">
+        <breadcrumb></breadcrumb>
+        <div class="pull-right">
+            <button class="btn btn-important" myadd id="add" ng-click="addActivity()">Add</button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="contentLeft">
+        <div user-activity='activity_option' style="height: 100%;"></div>
+    </div>
+    <div class="contentRight">
+        <div class="col-md-12">
+            <div class="box" ng-if="$root.checkRight(['manage_team_activity'])">
+                <div class="box_label">Assign To</div>
+                <div class="box_input">
+                    <input type="hidden" id="user" ui-select2="{ajax_url:'user', placeholder:'Select User', type:'object'}" ng-model="filter.user_id" ui-select2-data="filter.user_id" auto-focus>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box_label">Activity Status</div>
+                <div class="box_input">
+                    <select class="doneStatus" ui-select2="{placeholder:'Select Status'}" ng-model="filter.done_status" ui-select2-data="filter.done_status">
+                        <option value="0">Undone</option>
+                        <option value="1">Done</option>
+                        <option value="all">All</option>
+                    </select>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box_label">Period</div>
+                <div class="box_input">
+                    <select class="period" ui-select2="{placeholder:'Select Status'}" ng-model="filter.period" ui-select2-data="filter.period">
+                        <option value="today">Today</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="tommorow">Tomorrow</option>
+                        <option value="week">Last 7 days</option>
+                        <option value="all">All time</option>
+                        <option value="select">Select period</option>
+                    </select>
+                </div>
+            </div>
+            <div class="box" ng-if="filter.period == 'select'">
+                <div class="box_label">From date</div>
+                <div class="box_input">
+                    <div class="input-group date" k-datepicker="">
+                        <input type="text" class="text" placeholder="From Date..." ng-model='filter.from_date' />
+                        <span class="input-group-addon text_date_icon"><i class="la la-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box" ng-if="filter.period == 'select'">
+                <div class="box_label">To date</div>
+                <div class="box_input">
+                    <div class="input-group date" k-datepicker="">
+                        <input type="text" class="text" placeholder="To Date..." ng-model='filter.to_date' />
+                        <span class="input-group-addon text_date_icon"><i class="la la-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box_label">Activity Type</div>
+                <div class="box_input">
+                    <input class="activityType" type="hidden" ui-select2="{ajax_url:'activity_type', placeholder:'Select Activity Type', type:'object'}" ui-select2-data="filter.activity_type_id" ng-model='filter.activity_type_id' />
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 10px;">
+                <button class="btn btn-important" id="search" ng-click='getData(true)' style="margin-right: 4px; vertical-align: top; padding: 4px 10px;">Search</button>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+</div>
